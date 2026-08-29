@@ -1,0 +1,12 @@
+{
+  "name": "prompt-judge",
+  "version": "1.0.0",
+  "description": "tool for evaluating ai prompts",
+  "license": "ISC",
+  "author": "Charidimos Tzedakis",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
