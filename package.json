@@ -25,7 +25,8 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eval": "node --env-file-if-exists=.env src/eval-cli.ts"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
