@@ -1,0 +1,350 @@
+﻿{
+    "source":  "ArtifactsBench (Tencent) - dataset/artifacts_bench.json",
+    "repository":  "https://github.com/Tencent-Hunyuan/ArtifactsBenchmark",
+    "paper":  "https://arxiv.org/abs/2507.04952",
+    "license":  "CC BY 4.0 - https://creativecommons.org/licenses/by/4.0/",
+    "attribution":  "Test cases from ArtifactsBench by Tencent, licensed under CC BY 4.0. Records are unmodified; index is the original benchmark index.",
+    "selection":  "Five self-contained Web Applications cases, one per major subcategory, mixed difficulty, chosen to render as a single HTML file without a backend or build step.",
+    "cases":  [
+                  {
+                      "index":  270,
+                      "question":  "You are a code expert. Please use your professional knowledge to generate accurate and professional responses. Be sure to ensure that the code you generate is executable for demonstration purposes. Implement Windows-like multi-window functionality in HTML.",
+                      "checklist":  [
+                                        {
+                                            "id":  0,
+                                            "title":  "Window Creation and Management System",
+                                            "description":  "Evaluate whether the code properly implements a window creation system with the ability to create, close, minimize, maximize, and restore windows. Check if windows have proper title bars, borders, and control buttons that respond to user interactions.0 points if window creation is not implemented; 5 points if basic window creation exists but lacks some controls; 10 points if the implementation includes all standard window controls (minimize, maximize, restore, close) with proper functionality.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  1,
+                                            "title":  "Window Dragging and Resizing",
+                                            "description":  "Assess the implementation of window dragging (by title bar) and resizing (by borders or corners) functionality. Check if the code uses proper mouse event handling for smooth dragging and resizing operations, including cursor style changes when hovering over resize areas.0 points if dragging/resizing is not implemented; 5 points if only dragging is implemented or if resizing has significant limitations; 10 points if both dragging and resizing work smoothly with proper visual feedback and edge handling.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  2,
+                                            "title":  "Z-Index Management and Focus Handling",
+                                            "description":  "Evaluate the window stacking order management (z-index) and focus handling. Windows should come to front when clicked, and the active window should be visually distinguished from inactive ones. Check if there's proper management of window focus state.0 points if no z-index management exists; 5 points if basic z-index handling is implemented but with focus issues; 10 points if windows properly stack, with clear visual indication of the active window and correct focus management.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  3,
+                                            "title":  "Window Content Management",
+                                            "description":  "Check how window content is handled - whether windows can load different types of content (HTML elements, iframes, dynamic content), and if content correctly scales/scrolls when windows are resized. Evaluate if window content is properly contained within window boundaries.0 points if windows cannot hold content properly; 5 points if basic content display works but with limitations in scaling/scrolling; 10 points if windows can handle various content types with proper scaling, scrolling and containment.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  4,
+                                            "title":  "Code Robustness",
+                                            "description":  "Evaluate whether the code can handle common abnormal situations (such as rapid clicks, resizing beyond screen boundaries, memory management for multiple windows, etc.) and provide friendly error handling or recovery mechanisms.0 points if no exception handling exists; 5 points if basic error handling is implemented but some edge cases are unhandled; 10 points if comprehensive error handling is implemented with graceful degradation.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  5,
+                                            "title":  "Innovative Features Implementation",
+                                            "description":  "Check whether the code includes surprise features that enhance the experience (e.g., 1. Snap-to-grid functionality 2. Window snapping to screen edges 3. Window grouping/tabbing 4. Virtual desktop/workspace implementation).Add 3 points for each practical innovative feature implemented (maximum 10 points).",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  6,
+                                            "title":  "Feature Redundancy",
+                                            "description":  "Strictly check for redundancies: 1. Redundant implementation of similar functions (e.g., multiple window management systems coexisting) 2. Function modules unrelated to window management 3. Fancy effects that affect performance without adding value.Deduct 3 points for each redundancy found, and directly deduct 10 points if the core functions are interfered with by redundant code.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  7,
+                                            "title":  "Engineering Quality",
+                                            "description":  "Review modular design (separation of window management logic from presentation), code organization, use of appropriate design patterns, and reusability of components. Check for proper event handling cleanup to avoid memory leaks.Deduct 5 points if global state pollution is found or design patterns are not used; deduct 5 points if the code duplication rate is too high (over 30%); deduct 5 points if event listeners aren't properly managed. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  8,
+                                            "title":  "Visual Design and Windows UI Standards",
+                                            "description":  "Evaluate whether the windows follow standard UI conventions and have a professional appearance: 1) Consistent visual styling 2) Proper spacing and padding within window elements 3) Professional-looking window decorations (title bars, borders, buttons) that match Windows-like aesthetics.Deduct 3 points for each inconsistent visual element, 5 points for non-standard window controls placement, and 5 points for unprofessional window styling. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  9,
+                                            "title":  "Interaction Feedback and Animation Quality",
+                                            "description":  "Judge whether the window interactions provide appropriate feedback and animations: 1) Windows respond immediately to user actions 2) Smooth minimize/maximize animations 3) Visual feedback during dragging/resizing operations 4) Appropriate transitions between window states.Deduct 5 points for each operation without feedback, 3 points for choppy or unnatural animations, and 5 points for missing visual cues during important interactions. The full score is 10 points.",
+                                            "maxScore":  10
+                                        }
+                                    ],
+                      "class":  "Web Applications-Web Visuals",
+                      "difficulty":  "easy"
+                  },
+                  {
+                      "index":  482,
+                      "question":  "You are a code expert. Please use your professional knowledge to generate accurate and professional responses. Make sure the code you generate is executable for demonstration purposes. Build a product bundling feature for an online shopping mall, where when users purchase a certain item, they can see \"Bundle Offers,\" and by clicking on them, related products are automatically added to the shopping cart, and the total amount is updated.",
+                      "checklist":  [
+                                        {
+                                            "id":  0,
+                                            "title":  "Is the product bundling feature fully implemented?",
+                                            "description":  "Review whether the code accurately implements the core bundling functionality, including displaying bundle offers, adding bundled products to cart, and updating the total amount. Score 0 if the core functionality is missing, 5 if only basic bundling without proper UI integration is implemented, and 10 if the feature is fully functional with clear visual representation and intuitive user interaction.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  1,
+                                            "title":  "Is the shopping cart system properly implemented?",
+                                            "description":  "Evaluate whether the shopping cart functionality is complete, with features like adding/removing items, quantity adjustment, price calculation, and persistent state management. Check for real-time updates when items are added/removed and proper handling of cart operations. Deduct 3 points if quantity adjustment is missing, 3 points if price calculation has errors, and 4 points if cart state isn't properly maintained across user sessions. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  2,
+                                            "title":  "Are bundle offers properly displayed and integrated?",
+                                            "description":  "Check how bundle offers are presented to users. Bundle offers should be clearly visible, show cost savings, include relevant product information, and be contextually displayed next to the main product. Deduct 3 points if savings aren't highlighted, 3 points if bundle offers lack visual distinction from regular products, and 4 points if the offers aren't contextually relevant to the main product. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  3,
+                                            "title":  "Is the price calculation logic accurate and transparent?",
+                                            "description":  "Review whether the price calculation system correctly handles individual products, bundles, potential discounts, taxes, and shipping costs. The calculations must be accurate and transparent to users. Deduct 3 points for calculation errors, 4 points if bundle discounts aren't clearly shown, and 3 points if the breakdown of costs isn't visible to users. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  4,
+                                            "title":  "Is the code robust?",
+                                            "description":  "Evaluate whether the code can handle common abnormal situations (such as network errors, out-of-stock items, price changes during shopping, etc.) and provide friendly error prompts or recovery mechanisms. Code with strong robustness should be able to effectively handle these edge cases, giving 10 points. If the robustness is average, give 5 points, and if no exceptions are handled, give 0 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  5,
+                                            "title":  "Are there any innovative features that are eye-catching?",
+                                            "description":  "Check whether the code includes surprise features that enhance the experience (e.g., 1. Bundle recommendation based on browsing history 2. Dynamic bundle pricing based on selected options 3. Visual comparison of buying individually vs. bundled). Add 3 points for each practical innovative feature implemented (maximum 10 points).",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  6,
+                                            "title":  "Are there any redundant features?",
+                                            "description":  "Strictly check three types of redundancy: 1. Redundant implementation of similar functions (e.g., multiple cart update mechanisms) 2. Function modules unrelated to shopping (e.g., unnecessary social sharing features) 3. Fancy effects that affect performance (e.g., excessive animations when adding items to cart). Deduct 3 points for each redundancy found, and directly deduct 10 points if the core functions are interfered with by redundant code.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  7,
+                                            "title":  "Does the code have engineering quality?",
+                                            "description":  "Review modular design (such as separating product/cart/pricing logic), unit test coverage, and build process automation. Deduct 5 points if global state pollution is found or design patterns are not used; deduct 5 points if the code duplication rate is too high (over 30%); deduct 5 points if the build process is not automated. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  8,
+                                            "title":  "Does the interface vision meet professional design standards?",
+                                            "description":  "Evaluate whether the overall design follows modern e-commerce design principles: 1) Harmonious color matching (no more than 3 primary colors) 2) Proper layout spacing (element spacing follows the 8px multiple principle) 3) Professional font system (body font size ≥ 14px, line height over 1.5 times). Deduct 3 points for each crowded visual element, 5 points for a glaring color combination, and 5 points for chaotic text-image layout. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  9,
+                                            "title":  "Is the dynamic interaction smooth and seamless?",
+                                            "description":  "Judge whether the dynamic effects conform to e-commerce UX best practices: 1) Cart update feedback delay ≤ 100ms 2) Transition animation duration controlled between 300-500ms 3) Clear visual cues when bundle items are added to cart. Deduct 5 points for each operation without feedback, 3 points for jarring animations during bundle addition, and 5 points for confusing UI states after user interactions. The full score is 10 points.",
+                                            "maxScore":  10
+                                        }
+                                    ],
+                      "class":  "Web Applications-Online Shopping",
+                      "difficulty":  "medium"
+                  },
+                  {
+                      "index":  514,
+                      "question":  "You are a code expert. Please use your professional knowledge to generate accurate and professional responses. Make sure that the generated code is executable and functional. Create a web-based online document collaboration editing frontend interface. The interface should include a text editing area where users can input text content. Above it, there should be a toolbar containing text formatting buttons such as \"Bold,\" \"Italic,\" \"Underline,\" etc. When clicked, these buttons should change the style of the selected text. Additionally, the interface should display a real-time word count of the current document.",
+                      "checklist":  [
+                                        {
+                                            "id":  0,
+                                            "title":  "Is the basic text editing area properly implemented?",
+                                            "description":  "Review whether the code implements a functional text editing area with proper event handling (keypress, focus, blur), text selection capabilities, and cursor positioning. Score 0 if the editing area is not implemented, 5 if it has basic functionality but lacks advanced features, and 10 if it includes features like auto-save and undo/redo history.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  1,
+                                            "title":  "Are the formatting buttons fully functional?",
+                                            "description":  "Check whether the code properly implements formatting buttons (Bold, Italic, Underline, etc.) that apply formatting to selected text. The implementation should handle selection ranges correctly and maintain proper markup in the document. Deduct 2 points if any core formatting option is missing, 3 points if the selection state after formatting is lost, and 5 points if the formatting doesn't persist across editing sessions. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  2,
+                                            "title":  "Is the real-time word count feature correctly implemented?",
+                                            "description":  "Evaluate whether the word count updates in real-time as the user types, handles different languages correctly, and accounts for edge cases (like consecutive spaces or punctuation). The counter should update without noticeable performance impact. Deduct 3 points if the count is inaccurate, 3 points if it doesn't update in real-time, and 4 points if it causes performance issues. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  3,
+                                            "title":  "Does the interface handle collaborative features appropriately?",
+                                            "description":  "Assess whether the code includes conflict resolution mechanisms, user presence indicators, and real-time synchronization capabilities. Check for cursor/selection broadcasting between users and clear visual feedback on who is editing what. Deduct 5 points if there's no conflict resolution strategy, 3 points if user presence is not visualized, and 2 points if there's no indication of remote changes. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  4,
+                                            "title":  "Is the code robust?",
+                                            "description":  "Evaluate whether the code can handle common abnormal situations (such as content loss prevention, browser crashes, network interruption, concurrent edits, etc.) and provide friendly error prompts or recovery mechanisms. Code with strong robustness should be able to effectively handle these edge cases, giving 10 points. If the robustness is average, give 5 points, and if no exceptions are handled, give 0 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  5,
+                                            "title":  "Are there any innovative features that are eye-catching?",
+                                            "description":  "Check whether the code includes surprise features that enhance the experience (e.g., 1. Automatic document formatting 2. AI-powered writing suggestions 3. Document history with visual diff 4. Markdown/rich text switching capability). Add 3 points for each practical innovative feature implemented (maximum 10 points).",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  6,
+                                            "title":  "Are there any redundant features?",
+                                            "description":  "Strictly check three types of redundancy: 1. Redundant implementation of similar functions (e.g., multiple text selection methods coexisting) 2. Function modules unrelated to document editing (e.g., built-in games or distracting elements) 3. Fancy effects that affect editing performance (e.g., excessive animations on keypress). Deduct 3 points for each redundancy found, and directly deduct 10 points if the core functions are interfered with by redundant code.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  7,
+                                            "title":  "Does the code have engineering quality?",
+                                            "description":  "Review modular design (such as separating document model/view/controller layers), component reusability, and build process optimization. Deduct 5 points if global state pollution is found or design patterns are not used; deduct 5 points if the code duplication rate is too high (over 30%); deduct 5 points if the build process is not optimized for performance. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  8,
+                                            "title":  "Does the interface vision meet professional design standards?",
+                                            "description":  "Evaluate whether the overall design follows modern editor design principles: 1) Clean, distraction-free editing area 2) Proper toolbar organization with logical grouping 3) Appropriate use of white space and contrast 4) Professional typography for both editing area and UI elements. Deduct 3 points for cluttered UI elements, 5 points for inconsistent visual hierarchy, and 5 points for poor readability in the editing area. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  9,
+                                            "title":  "Is the dynamic interaction smooth and seamless?",
+                                            "description":  "Judge whether the dynamic effects conform to human perception characteristics: 1) Text input latency ≤ 16ms 2) Format button feedback ≤ 100ms 3) Clear visual indicators for text selection and formatting states. Deduct 5 points for perceptible input lag, 3 points for formatting operations that disrupt the editing flow, and 5 points if the current formatting state isn't clearly indicated. The full score is 10 points.",
+                                            "maxScore":  10
+                                        }
+                                    ],
+                      "class":  "Web Applications-Communication",
+                      "difficulty":  "medium"
+                  },
+                  {
+                      "index":  231,
+                      "question":  "You are a code expert. Please use your professional knowledge to generate accurate and professional responses. Be careful to ensure that the generated code is executable for demonstration. I am a biology teacher and need help designing an HTML webpage for a virtual experiment demonstration of the spread plate technique for a biology class. The webpage should include experimental materials and equipment: test tubes with yeast culture broth, cotton plugs, solid culture medium, inoculation loops, alcohol lamp (flammable), clean bench, and inoculation loops. The material and tool icons should be aesthetically pleasing and resemble actual images, with colors matching the real objects. Icons should be positioned on both sides of the page, movable, and highly interactive.",
+                      "checklist":  [
+                                        {
+                                            "id":  0,
+                                            "title":  "Is the spread plate technique procedure accurately implemented?",
+                                            "description":  "Review whether the code accurately implements all key steps of the spread plate technique (sterilizing the loop, cooling, sampling, inoculation, spreading, incubation). Score 0 if core procedure steps are missing, 5 if basic steps are implemented but lack scientific accuracy, and 10 if all microbiology protocols are followed with proper sequence and safety considerations.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  1,
+                                            "title":  "Are all required experimental materials and equipment fully implemented?",
+                                            "description":  "Check whether all materials (test tubes with yeast culture broth, cotton plugs, solid culture medium, inoculation loops, alcohol lamp, clean bench) are implemented with proper visual representation. Deduct 2 points for each missing item. All items must be interactive and movable. Full implementation with accurate visual representation scores 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  2,
+                                            "title":  "Is the drag-and-drop interaction system properly implemented?",
+                                            "description":  "Evaluate the quality of the drag-and-drop system for moving experimental tools. Check for smooth animation (60fps), precise positioning, proper z-index management, and intuitive interaction. Deduct 3 points if there's noticeable lag, 3 points if tool positioning is imprecise, and 4 points if tools can't be reliably manipulated. Full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  3,
+                                            "title":  "Are experimental safety procedures and scientific accuracy maintained?",
+                                            "description":  "Assess if the simulation enforces proper microbiology safety protocols (flame sterilization, aseptic technique, contamination prevention) and follows scientific accuracy. Deduct 5 points if critical safety procedures are missing or incorrect. Deduct 5 points if the simulation allows scientifically impossible actions. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  4,
+                                            "title":  "Is the code robust?",
+                                            "description":  "Evaluate whether the code can handle common abnormal situations (such as rapid multiple clicks, dropping objects in invalid areas, browser resizing) and provide friendly error prompts or recovery mechanisms. Code with strong robustness should be able to effectively handle these edge cases, giving 10 points. If the robustness is average, give 5 points, and if no exceptions are handled, give 0 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  5,
+                                            "title":  "Are there any innovative features that are eye-catching?",
+                                            "description":  "Check whether the code includes surprise features that enhance the learning experience (e.g., 1. Microscopic view of yeast cells 2. Time-lapse of colony growth 3. Quiz integration to test student knowledge). Add 3 points for each practical innovative feature implemented (maximum 10 points).",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  6,
+                                            "title":  "Are there any redundant features?",
+                                            "description":  "Strictly check three types of redundancy: 1. Redundant implementation of similar functions (e.g., multiple drag-and-drop systems) 2. Function modules unrelated to the spread plate technique (e.g., unrelated biological processes) 3. Fancy effects that affect performance (e.g., excessive animations that distract from learning). Deduct 3 points for each redundancy found, and directly deduct 10 points if the core functions are interfered with by redundant code.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  7,
+                                            "title":  "Does the code have engineering quality?",
+                                            "description":  "Review modular design (such as separating experiment logic/view/interaction layers), code organization, and maintainability. Deduct 5 points if global state pollution is found or design patterns are not used; deduct 5 points if the code duplication rate is too high (over 30%); deduct 5 points if there's no clear separation of concerns. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  8,
+                                            "title":  "Does the interface vision meet professional educational design standards?",
+                                            "description":  "Evaluate whether material and tool icons are aesthetically pleasing and resemble actual lab equipment with accurate colors. Check for: 1) Visual clarity and high-quality graphics 2) Proper layout with tools easily accessible on both sides of the page 3) Clear visual instructions and labels. Deduct 3 points for each low-quality or unrealistic icon, 5 points for poor layout of materials, and 5 points for confusing visual hierarchy. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  9,
+                                            "title":  "Is the dynamic interaction smooth and educational?",
+                                            "description":  "Judge whether the dynamic effects support learning objectives: 1) Clear visual feedback when tools are used correctly/incorrectly 2) Appropriate animation speed that matches real laboratory timing 3) Instructional cues that guide proper technique. Deduct 5 points for each operation without feedback, 3 points for animations that are too fast to observe properly, and 5 points for missing educational guidance during critical steps. The full score is 10 points.",
+                                            "maxScore":  10
+                                        }
+                                    ],
+                      "class":  "Web Applications-Education/Learning",
+                      "difficulty":  "hard"
+                  },
+                  {
+                      "index":  539,
+                      "question":  "You are a code expert. Please use your professional knowledge to generate accurate and professional responses. Be careful to ensure the generated code is executable and displayable. Build a blog community that supports article classification by topic circles, where users can join multiple topic circles of interest, publish thematic articles, or vote and comment on other articles within the circles.",
+                      "checklist":  [
+                                        {
+                                            "id":  0,
+                                            "title":  "Is the core community blog system fully implemented?",
+                                            "description":  "Evaluate whether the code implements the essential blog community features: user registration/login, article creation/editing, and viewing functionality. Check if the article model properly includes title, content, author reference, timestamps, and view counts. Scoring: 0 if core publishing system is missing, 5 if basic CRUD operations are present but lack refinement, 10 if full-featured with draft saving and publishing workflow.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  1,
+                                            "title":  "Is the topic circle functionality properly implemented?",
+                                            "description":  "Review whether the topic circles system allows users to create, join, and interact within multiple interest groups. Check if the data model correctly handles many-to-many relationships between users and circles, and whether articles are properly categorized by topic. Deduct 5 points if users cannot join multiple circles simultaneously, 3 points if circle discovery is difficult. Full score requires search/filter functionality for circles.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  2,
+                                            "title":  "Is the social interaction system comprehensive?",
+                                            "description":  "Examine the implementation of voting (upvote/downvote), commenting, sharing, and following functionalities. Check if comments support threading/nesting and if the voting system prevents duplicate votes. Deduct 3 points if notification system for interactions is missing, 5 points if comment moderation tools aren't available. The full score requires at least 3 types of social interactions with proper state management.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  3,
+                                            "title":  "Is the content discovery and recommendation system effective?",
+                                            "description":  "Evaluate whether the platform provides ways to discover content through trending articles, personalized recommendations, or topic exploration. Check if the system uses algorithms that consider user interests and behavior. Score 0 if no discovery features exist, 5 if basic categorization is present, 10 if the system includes personalized feeds and trending metrics with proper visualization of popularity.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  4,
+                                            "title":  "Is the code robust?",
+                                            "description":  "Evaluate whether the code can handle common abnormal situations (such as invalid inputs, server errors, concurrent user actions, etc.) and provide friendly error prompts or recovery mechanisms. Code with strong robustness should implement proper validation, error boundaries, and graceful degradation. Give 10 points for comprehensive error handling, 5 points for average robustness, and 0 points if no exception handling exists.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  5,
+                                            "title":  "Are there any innovative features that are eye-catching?",
+                                            "description":  "Check whether the code includes surprise features that enhance the experience (e.g., 1. Real-time collaborative editing 2. AI-assisted content moderation 3. Interactive data visualizations of community engagement 4. Markdown or rich text editing with preview). Add 3 points for each practical innovative feature implemented (maximum 10 points).",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  6,
+                                            "title":  "Are there any redundant features?",
+                                            "description":  "Strictly check three types of redundancy: 1. Redundant implementation of similar functions (e.g., multiple commenting systems coexisting) 2. Function modules unrelated to blog community (e.g., unintegrated games or calculators) 3. Fancy effects that affect performance (e.g., excessive animations on every page interaction). Deduct 3 points for each redundancy found, and directly deduct 10 points if the core functions are interfered with by redundant code.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  7,
+                                            "title":  "Does the code have engineering quality?",
+                                            "description":  "Review modular design (such as separating API/business logic/UI components), component reusability, state management patterns, and test coverage. Deduct 5 points if global state pollution is found or design patterns are not used; deduct 5 points if the code duplication rate is too high (over 30%); deduct 5 points if there's no component separation or proper file organization. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  8,
+                                            "title":  "Does the interface vision meet professional design standards?",
+                                            "description":  "Evaluate whether the overall design follows modern design principles: 1) Harmonious color matching (no more than 3 primary colors) 2) Proper layout spacing (element spacing follows the 8px multiple principle) 3) Professional typography system (body font size ≥ 14px, line height over 1.5 times). Deduct 3 points for each crowded visual element, 5 points for a glaring color combination, and 5 points for chaotic text-image layout. The full score is 10 points.",
+                                            "maxScore":  10
+                                        },
+                                        {
+                                            "id":  9,
+                                            "title":  "Is the dynamic interaction smooth and seamless?",
+                                            "description":  "Judge whether the dynamic effects conform to human perception characteristics: 1) Click feedback delay ≤ 100ms 2) Transition animation duration controlled between 300-500ms 3) Clear visual focus guidance. Check if content loading uses skeleton screens or loading indicators, and if pagination or infinite scrolling is implemented for article lists. Deduct 5 points for each operation without feedback, 3 points for janky scrolling performance, and 5 points for hard-to-find key function buttons. The full score is 10 points.",
+                                            "maxScore":  10
+                                        }
+                                    ],
+                      "class":  "Web Applications-Blogs/Forums",
+                      "difficulty":  "medium"
+                  }
+              ]
+}

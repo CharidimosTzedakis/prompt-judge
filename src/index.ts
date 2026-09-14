@@ -1,5 +1,5 @@
 import { runAgent } from "./runner.ts";
-import { baselineVariant, REVIEW_TOOLS } from "./cases/review-diff.ts";
+import { baselineVariant, REVIEW_TOOLS } from "./use-cases/review-diff.ts";
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 
 // Core: the pieces every use case is built from.
@@ -20,6 +20,8 @@ export { runAgent, type RunOptions } from "./runner.ts";
 export { judgeOutput, type JudgeOptions } from "./judge.ts";
 export { runSuite, type SuiteOptions } from "./suite.ts";
 
+
+
 // Diff review: the first use case, now expressed as data over that core.
 export {
   getDiff,
@@ -29,7 +31,7 @@ export {
   checklistVariant,
   REVIEW_TOOLS,
   type DiffInput,
-} from "./cases/review-diff.ts";
+} from "./use-cases/review-diff.ts";
 
 export type ReviewOptions = {
   /** The diff to review. Supply it yourself so the reviewed input is deterministic. */
