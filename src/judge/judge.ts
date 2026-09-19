@@ -1,3 +1,4 @@
+import * as z from "zod";
 import { runAgent } from "../runner.ts";
 import { weightedMean } from "./utils.ts";
 import { SCALE, DEFAULT_JUDGE_MODEL } from "./constants.ts";
@@ -5,34 +6,25 @@ import type { Criterion, Judgment, CriterionScore } from "../types.ts";
 import type { JudgeOptions } from "./types.ts";
 
 function scoreSchema(criteria: Criterion[]): Record<string, unknown> {
-  return {
-    type: "object",
-    properties: {
-      scores: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            criterionId: { type: "string", enum: criteria.map((c) => c.id) },
-            score: { type: "integer", minimum: 1, maximum: 5 },
-            reasoning: {
-              type: "string",
-              description:
-                "One or two sentences citing what in the output drove the score.",
-            },
-          },
-          required: ["criterionId", "score", "reasoning"],
-          additionalProperties: false,
-        },
-      },
-      summary: {
-        type: "string",
+  const Score = z
+    .object({
+      scores: z.array(
+        z.object({
+          criterionId: z.enum(criteria.map((c) => c.id)),
+          score: z.int().min(1).max(5),
+          reasoning: z.string().meta({
+            description:
+              "One or two sentences citing what in the output drove the score.",
+          }),
+        }),
+      ),
+      summary: z.string().meta({
         description: "Two sentences on the output's overall quality.",
-      },
-    },
-    required: ["scores", "summary"],
-    additionalProperties: false,
-  };
+      }),
+    })
+    .strict();
+
+  return z.toJSONSchema(Score, { target: "draft-7" });
 }
 
 // Both the task and the output are untrusted: the output was written by the
