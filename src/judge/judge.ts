@@ -5,26 +5,38 @@ import { SCALE, DEFAULT_JUDGE_MODEL } from "./constants.ts";
 import type { Criterion, Judgment, CriterionScore } from "../types.ts";
 import type { JudgeOptions } from "./types.ts";
 
-function scoreSchema(criteria: Criterion[]): Record<string, unknown> {
-  const Score = z
-    .object({
-      scores: z.array(
-        z.object({
-          criterionId: z.enum(criteria.map((c) => c.id)),
-          score: z.int().min(1).max(5),
-          reasoning: z.string().meta({
-            description:
-              "One or two sentences citing what in the output drove the score.",
-          }),
-        }),
-      ),
-      summary: z.string().meta({
-        description: "Two sentences on the output's overall quality.",
-      }),
-    })
-    .strict();
+const ScoreEntry = z
+  .object({
+    criterionId: z.string(),
+    score: z.int().min(1).max(5),
+    reasoning: z.string().meta({
+      description:
+        "One or two sentences citing what in the output drove the score.",
+    }),
+  })
+  .strict();
 
-  return z.toJSONSchema(Score, { target: "draft-7" });
+const Score = z
+  .object({
+    scores: z.array(ScoreEntry),
+    summary: z.string().meta({
+      description: "Two sentences on the output's overall quality.",
+    }),
+  })
+  .strict();
+
+export type Score = z.infer<typeof Score>;
+
+function scoreSchema(criteria: Criterion[]): Record<string, unknown> {
+  const ScoreForRubric = Score.extend({
+    scores: z.array(
+      ScoreEntry.extend({
+        criterionId: z.enum(criteria.map((c) => c.id)),
+      }),
+    ),
+  });
+
+  return z.toJSONSchema(ScoreForRubric, { target: "draft-7" });
 }
 
 // Both the task and the output are untrusted: the output was written by the
