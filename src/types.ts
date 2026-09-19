@@ -9,12 +9,14 @@
  * A Suite is the cross product plus the judge's configuration.
  */
 
-/** One rubric line. The judge scores each independently. */
+/**
+ * One rubric line the judge scores independently.
+ * question: phrased as a question about the output.
+ *   weight: relative weight in the overall score. Defaults to 1.
+ */
 export type Criterion = {
   id: string;
-  /** What the judge checks, phrased as a question about the output. */
   question: string;
-  /** Relative weight in the overall score. Defaults to 1. */
   weight?: number;
 };
 

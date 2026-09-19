@@ -1,26 +1,8 @@
-import { runAgent } from "./runner.ts";
-import type { Criterion, Judgment, CriterionScore } from "./types.ts";
-
-/** Default judge model. Grading is the part you least want to economise on. */
-const DEFAULT_JUDGE_MODEL = "claude-opus-5";
-
-/** Both ends of the scale are named so scores mean the same thing across runs. */
-const SCALE = `1 = fails the criterion outright
-2 = attempts it but the result is unusable
-3 = partially satisfies it, with a real gap
-4 = satisfies it, with a minor gap
-5 = fully satisfies it`;
-
-export type JudgeOptions = {
-  /** The task the output was produced for, rendered for the judge. */
-  input: string;
-  /** The output being graded. */
-  output: string;
-  criteria: Criterion[];
-  model?: string;
-  /** Extra instructions - house style, domain caveats. */
-  guidance?: string;
-};
+import { runAgent } from "../runner.ts";
+import { weightedMean } from "./utils.ts";
+import { SCALE, DEFAULT_JUDGE_MODEL } from "./constants.ts";
+import type { Criterion, Judgment, CriterionScore } from "../types.ts";
+import type { JudgeOptions } from "./types.ts";
 
 function scoreSchema(criteria: Criterion[]): Record<string, unknown> {
   return {
@@ -35,7 +17,8 @@ function scoreSchema(criteria: Criterion[]): Record<string, unknown> {
             score: { type: "integer", minimum: 1, maximum: 5 },
             reasoning: {
               type: "string",
-              description: "One or two sentences citing what in the output drove the score.",
+              description:
+                "One or two sentences citing what in the output drove the score.",
             },
           },
           required: ["criterionId", "score", "reasoning"],
@@ -55,10 +38,13 @@ function scoreSchema(criteria: Criterion[]): Record<string, unknown> {
 // Both the task and the output are untrusted: the output was written by the
 // model under test, which is exactly the thing that might try to inflate its
 // own score. Neither is ever treated as instructions.
-function buildJudgePrompt({ input, output, criteria, guidance }: JudgeOptions): string {
-  const rubric = criteria
-    .map((c) => `- ${c.id}: ${c.question}`)
-    .join("\n");
+function buildJudgePrompt({
+  input,
+  output,
+  criteria,
+  guidance,
+}: JudgeOptions): string {
+  const rubric = criteria.map((c) => `- ${c.id}: ${c.question}`).join("\n");
 
   return `You are grading the output of an AI agent against a rubric.
 
@@ -90,7 +76,10 @@ Score every criterion exactly once. Base each reasoning on specific content in
 the output, not on its length or confidence.`;
 }
 
-function parseScores(raw: unknown, criteria: Criterion[]): { scores: CriterionScore[]; summary: string } {
+function parseScores(
+  raw: unknown,
+  criteria: Criterion[],
+): { scores: CriterionScore[]; summary: string } {
   if (typeof raw !== "object" || raw === null) {
     throw new Error("Judge returned no structured output");
   }
@@ -122,19 +111,6 @@ function parseScores(raw: unknown, criteria: Criterion[]): { scores: CriterionSc
     scores: criteria.map((c) => byId.get(c.id)!),
     summary: typeof summary === "string" ? summary : "",
   };
-}
-
-/** Weighted mean. Computed here so the model never does the arithmetic. */
-function weightedMean(scores: CriterionScore[], criteria: Criterion[]): number {
-  const weightOf = new Map(criteria.map((c) => [c.id, c.weight ?? 1]));
-  let total = 0;
-  let weight = 0;
-  for (const s of scores) {
-    const w = weightOf.get(s.criterionId) ?? 1;
-    total += s.score * w;
-    weight += w;
-  }
-  return weight === 0 ? 0 : total / weight;
 }
 
 /**
