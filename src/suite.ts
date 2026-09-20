@@ -6,7 +6,7 @@ import type {
   Trial,
   VariantSummary,
   EvalCase,
-  PromptVariant
+  PromptVariant,
 } from "./types.ts";
 
 export type SuiteOptions = {
@@ -26,7 +26,7 @@ type PlannedTrial<Input> = {
 async function mapWithLimit<T, R>(
   items: T[],
   limit: number,
-  fn: (item: T) => Promise<R>
+  fn: (item: T) => Promise<R>,
 ): Promise<R[]> {
   const results = new Array<R>(items.length);
   let next = 0;
@@ -39,7 +39,7 @@ async function mapWithLimit<T, R>(
   };
 
   await Promise.all(
-    Array.from({ length: Math.min(limit, items.length) }, worker)
+    Array.from({ length: Math.min(limit, items.length) }, worker),
   );
   return results;
 }
@@ -58,7 +58,7 @@ function stdDev(values: number[]): number {
 
 function summarize<Input>(
   variant: PromptVariant<Input>,
-  trials: Trial[]
+  trials: Trial[],
 ): VariantSummary {
   const mine = trials.filter((t) => t.variantId === variant.id);
   const judged = mine.filter((t) => t.judgment !== undefined);
@@ -82,8 +82,8 @@ function summarize<Input>(
     meanTurns: mean(mine.map((t) => t.run.numTurns)),
     meanDurationMs: mean(mine.map((t) => t.run.durationMs)),
     meanByCriterion: Object.fromEntries(
-      Object.entries(byCriterion).map(([id, scores]) => [id, mean(scores)])
-    )
+      Object.entries(byCriterion).map(([id, scores]) => [id, mean(scores)]),
+    ),
   };
 }
 
@@ -97,7 +97,7 @@ function summarize<Input>(
  */
 export async function runSuite<Input>(
   suite: Suite<Input>,
-  { concurrency = 4, onTrial }: SuiteOptions = {}
+  { concurrency = 4, onTrial }: SuiteOptions = {},
 ): Promise<SuiteReport> {
   const startedAt = new Date();
   const started = Date.now();
@@ -118,23 +118,19 @@ export async function runSuite<Input>(
 
     const run = await runAgent({
       prompt: variant.buildPrompt(evalCase.input),
-      ...(variant.systemPrompt !== undefined && {
-        systemPrompt: variant.systemPrompt
-      }),
+      ...(variant.systemPrompt !== undefined && { systemPrompt: variant.systemPrompt }),
       ...(variant.tools !== undefined && { tools: variant.tools }),
       ...(variant.model !== undefined && { model: variant.model }),
       ...(variant.maxTurns !== undefined && { maxTurns: variant.maxTurns }),
-      ...(variant.maxBudgetUsd !== undefined && {
-        maxBudgetUsd: variant.maxBudgetUsd
-      }),
-      ...(evalCase.cwd !== undefined && { cwd: evalCase.cwd })
+      ...(variant.maxBudgetUsd !== undefined && { maxBudgetUsd: variant.maxBudgetUsd }),
+      ...(evalCase.cwd !== undefined && { cwd: evalCase.cwd }),
     });
 
     const trial: Trial = {
       variantId: variant.id,
       caseId: evalCase.id,
       repeat,
-      run
+      run,
     };
 
     // A failed run is a result, not an exception: it counts against the
@@ -146,13 +142,10 @@ export async function runSuite<Input>(
           output: run.output,
           criteria,
           ...(suite.judge?.model !== undefined && { model: suite.judge.model }),
-          ...(suite.judge?.guidance !== undefined && {
-            guidance: suite.judge.guidance
-          })
+          ...(suite.judge?.guidance !== undefined && { guidance: suite.judge.guidance }),
         });
       } catch (error) {
-        trial.judgeError =
-          error instanceof Error ? error.message : String(error);
+        trial.judgeError = error instanceof Error ? error.message : String(error);
       }
     }
 
@@ -162,7 +155,7 @@ export async function runSuite<Input>(
 
   const totalCostUsd = trials.reduce(
     (sum, t) => sum + t.run.totalCostUsd + (t.judgment?.judgeCostUsd ?? 0),
-    0
+    0,
   );
 
   return {
@@ -171,6 +164,6 @@ export async function runSuite<Input>(
     durationMs: Date.now() - started,
     totalCostUsd,
     trials,
-    variants: suite.variants.map((v) => summarize(v, trials))
+    variants: suite.variants.map((v) => summarize(v, trials)),
   };
 }

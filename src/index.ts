@@ -14,11 +14,13 @@ export type {
   Judgment,
   Trial,
   VariantSummary,
-  SuiteReport
+  SuiteReport,
 } from "./types.ts";
 export { runAgent, type RunOptions } from "./runner.ts";
 export { judgeOutput, type JudgeOptions } from "./judge.ts";
 export { runSuite, type SuiteOptions } from "./suite.ts";
+
+
 
 // Diff review: the first use case, now expressed as data over that core.
 export {
@@ -28,7 +30,7 @@ export {
   baselineVariant,
   checklistVariant,
   REVIEW_TOOLS,
-  type DiffInput
+  type DiffInput,
 } from "./use-cases/review-diff.ts";
 
 export type ReviewOptions = {
@@ -65,13 +67,13 @@ export async function reviewDiff({
   diff,
   base = "main",
   cwd,
-  onMessage
+  onMessage,
 }: ReviewOptions): Promise<ReviewResult> {
   const run = await runAgent({
     prompt: baselineVariant.buildPrompt({ diff, base }),
     tools: REVIEW_TOOLS,
     ...(cwd !== undefined && { cwd }),
-    ...(onMessage !== undefined && { onMessage })
+    ...(onMessage !== undefined && { onMessage }),
   });
 
   return {
@@ -81,6 +83,7 @@ export async function reviewDiff({
     subtype: run.subtype,
     numTurns: run.numTurns,
     totalCostUsd: run.totalCostUsd,
-    durationMs: run.durationMs
+    durationMs: run.durationMs,
   };
 }
+
