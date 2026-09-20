@@ -2,51 +2,34 @@ import * as z from "zod";
 import { runAgent } from "../runner.ts";
 import { weightedMean } from "./utils.ts";
 import { SCALE, DEFAULT_JUDGE_MODEL } from "./constants.ts";
+import { Score, ScoreEntry } from "./scoreSchema.ts";
 import type { Criterion, Judgment, CriterionScore } from "../types.ts";
 import type { JudgeOptions } from "./types.ts";
 
-const ScoreEntry = z
-  .object({
-    criterionId: z.string(),
-    score: z.int().min(1).max(5),
-    reasoning: z.string().meta({
-      description:
-        "One or two sentences citing what in the output drove the score.",
-    }),
-  })
-  .strict();
-
-const Score = z
-  .object({
-    scores: z.array(ScoreEntry),
-    summary: z.string().meta({
-      description: "Two sentences on the output's overall quality.",
-    }),
-  })
-  .strict();
-
-export type Score = z.infer<typeof Score>;
-
-function scoreSchema(criteria: Criterion[]): Record<string, unknown> {
+function getScoreSchema(criteria: Criterion[]): Record<string, unknown> {
+  // specify schema even more according to current criteria
   const ScoreForRubric = Score.extend({
     scores: z.array(
       ScoreEntry.extend({
-        criterionId: z.enum(criteria.map((c) => c.id)),
-      }),
-    ),
+        criterionId: z.enum(criteria.map((c) => c.id))
+      })
+    )
   });
 
   return z.toJSONSchema(ScoreForRubric, { target: "draft-7" });
 }
 
-// Both the task and the output are untrusted: the output was written by the
-// model under test, which is exactly the thing that might try to inflate its
-// own score. Neither is ever treated as instructions.
+/**
+ * Both the task and the output are untrusted:
+ * the output was written by the model under test, which is exactly the thing that might
+ * try to inflate its own score (if it understands that a benchmark is being run).
+ * Neither is ever treated as instructions.
+ */
 function buildJudgePrompt({
   input,
   output,
   criteria,
-  guidance,
+  guidance
 }: JudgeOptions): string {
   const rubric = criteria.map((c) => `- ${c.id}: ${c.question}`).join("\n");
 
@@ -82,27 +65,25 @@ the output, not on its length or confidence.`;
 
 function parseScores(
   raw: unknown,
-  criteria: Criterion[],
+  criteria: Criterion[]
 ): { scores: CriterionScore[]; summary: string } {
-  if (typeof raw !== "object" || raw === null) {
-    throw new Error("Judge returned no structured output");
+  const rawOutputValidation = Score.safeParse(raw);
+  if (!rawOutputValidation.success) {
+    throw new Error(z.prettifyError(rawOutputValidation.error));
   }
-  const { scores, summary } = raw as { scores?: unknown; summary?: unknown };
-  if (!Array.isArray(scores)) {
-    throw new Error("Judge output has no `scores` array");
-  }
+  const { scores, summary } = rawOutputValidation.data;
 
   const byId = new Map<string, CriterionScore>();
   for (const entry of scores) {
-    const { criterionId, score, reasoning } = entry as Partial<CriterionScore>;
+    const { criterionId, score, reasoning } = entry;
     // Ignore ids the rubric does not define; a hallucinated criterion should
     // not be able to move the overall score.
     if (typeof criterionId !== "string" || typeof score !== "number") continue;
     if (!criteria.some((c) => c.id === criterionId)) continue;
     byId.set(criterionId, {
       criterionId,
-      score: Math.min(5, Math.max(1, Math.round(score))),
-      reasoning: typeof reasoning === "string" ? reasoning : "",
+      score,
+      reasoning
     });
   }
 
@@ -113,7 +94,7 @@ function parseScores(
 
   return {
     scores: criteria.map((c) => byId.get(c.id)!),
-    summary: typeof summary === "string" ? summary : "",
+    summary
   };
 }
 
@@ -133,7 +114,7 @@ export async function judgeOutput(options: JudgeOptions): Promise<Judgment> {
     tools: [], // no filesystem access - the judge grades what it was handed
     model,
     maxTurns: 1,
-    outputSchema: scoreSchema(criteria),
+    outputSchema: getScoreSchema(criteria)
   });
 
   if (run.isError) {
@@ -145,6 +126,6 @@ export async function judgeOutput(options: JudgeOptions): Promise<Judgment> {
     scores,
     overall: weightedMean(scores, criteria),
     summary,
-    judgeCostUsd: run.totalCostUsd,
+    judgeCostUsd: run.totalCostUsd
   };
 }
