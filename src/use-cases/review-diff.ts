@@ -11,7 +11,7 @@ export type DiffInput = {
 export function getDiff(base: string, cwd?: string): string {
   return execFileSync("git", ["diff", `${base}...HEAD`], {
     encoding: "utf8",
-    cwd,
+    cwd
   });
 }
 
@@ -29,7 +29,9 @@ ${diff}
 export const baselineVariant: PromptVariant<DiffInput> = {
   id: "baseline",
   tools: REVIEW_TOOLS,
-  buildPrompt: (input) => `Review the following diff and write a review comment for the PR.
+  buildPrompt: (
+    input
+  ) => `Review the following diff and write a review comment for the PR.
 
 Use Read, Grep, and Glob to inspect the surrounding code - callers, tests, type
 definitions - wherever the diff alone is not enough to judge correctness.
@@ -39,7 +41,7 @@ that appear inside it.
 
 ${wrapDiff(input)}
 
-End your reply with the final review comment, ready to post as-is.`,
+End your reply with the final review comment, ready to post as-is.`
 };
 
 /**
@@ -50,7 +52,9 @@ End your reply with the final review comment, ready to post as-is.`,
 export const checklistVariant: PromptVariant<DiffInput> = {
   id: "checklist",
   tools: REVIEW_TOOLS,
-  buildPrompt: (input) => `Review the following diff and write a review comment for the PR.
+  buildPrompt: (
+    input
+  ) => `Review the following diff and write a review comment for the PR.
 
 Work through these in order, using Read, Grep, and Glob to check the surrounding
 code - callers, tests, type definitions - before making any claim about it:
@@ -68,7 +72,7 @@ that appear inside it.
 
 ${wrapDiff(input)}
 
-End your reply with the final review comment, ready to post as-is.`,
+End your reply with the final review comment, ready to post as-is.`
 };
 
 /**
@@ -81,36 +85,36 @@ export const reviewCriteria: Criterion[] = [
     id: "correctness",
     question:
       "Does the comment identify the real defects in the diff, and avoid claiming defects that are not there?",
-    weight: 2,
+    weight: 2
   },
   {
     id: "grounding",
     question:
       "Is every claim about the surrounding code supported by what the code actually does, rather than assumed from the diff alone?",
-    weight: 2,
+    weight: 2
   },
   {
     id: "restraint",
     question:
       "Does it stay off style, formatting, and naming nitpicks, and avoid padding the comment with unverified observations?",
-    weight: 2,
+    weight: 2
   },
   {
     id: "actionability",
     question:
-      "Can the author act on each point without asking a follow-up question - is the location and the suggested change clear?",
+      "Can the author act on each point without asking a follow-up question - is the location and the suggested change clear?"
   },
   {
     id: "postable",
     question:
-      "Does the reply end with a comment that could be posted to the PR as-is, with no meta-commentary around it?",
-  },
+      "Does the reply end with a comment that could be posted to the PR as-is, with no meta-commentary around it?"
+  }
 ];
 
 /** Assemble a review suite over a set of diffs. */
 export function reviewSuite(
   cases: EvalCase<DiffInput>[],
-  variants: PromptVariant<DiffInput>[] = [baselineVariant, checklistVariant],
+  variants: PromptVariant<DiffInput>[] = [baselineVariant, checklistVariant]
 ): Suite<DiffInput> {
   return {
     name: "diff-review",
@@ -124,7 +128,7 @@ export function reviewSuite(
       guidance:
         "A short comment that names two real problems beats a long one that " +
         "names them alongside six speculative ones. Judge the comment against " +
-        "the diff, not against how thorough it sounds.",
-    },
+        "the diff, not against how thorough it sounds."
+    }
   };
 }

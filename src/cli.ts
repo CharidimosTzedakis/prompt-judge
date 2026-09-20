@@ -23,11 +23,11 @@ const result = await reviewDiff({
         }
       }
     }
-  },
+  }
 });
 
 console.error(
-  `Done: ${result.subtype} (${result.numTurns} turns, $${result.totalCostUsd.toFixed(4)})`,
+  `Done: ${result.subtype} (${result.numTurns} turns, $${result.totalCostUsd.toFixed(4)})`
 );
 
 if (result.isError) {

@@ -1,6 +1,9 @@
 import type { Criterion, CriterionScore } from "../types.ts";
 
-export function weightedMean(scores: CriterionScore[], criteria: Criterion[]): number {
+export function weightedMean(
+  scores: CriterionScore[],
+  criteria: Criterion[]
+): number {
   const weightOf = new Map(criteria.map((c) => [c.id, c.weight ?? 1]));
   let total = 0;
   let weight = 0;
