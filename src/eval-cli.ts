@@ -41,7 +41,7 @@ const suite = { ...reviewSuite(cases), repeats };
 
 console.error(
   `Running ${suite.variants.length} variants x ${cases.length} cases x ${repeats} repeats ` +
-    `(${suite.variants.length * cases.length * repeats} trials, ${concurrency} at a time)`,
+    `(${suite.variants.length * cases.length * repeats} trials, ${concurrency} at a time)`
 );
 
 const report: SuiteReport = await runSuite(suite, {
@@ -55,14 +55,16 @@ const report: SuiteReport = await runSuite(suite, {
     } else {
       console.error(`  ${label}: ${trial.judgment!.overall.toFixed(2)}/5`);
     }
-  },
+  }
 });
 
-console.error(`\n${report.suite} - $${report.totalCostUsd.toFixed(4)}, ${(report.durationMs / 1000).toFixed(1)}s\n`);
+console.error(
+  `\n${report.suite} - $${report.totalCostUsd.toFixed(4)}, ${(report.durationMs / 1000).toFixed(1)}s\n`
+);
 for (const v of report.variants) {
   console.error(
     `  ${v.variantId.padEnd(12)} ${v.meanOverall.toFixed(2)} +/- ${v.stdDevOverall.toFixed(2)}  ` +
-      `(${v.judged}/${v.trials} judged, $${v.meanCostUsd.toFixed(4)}/run, ${v.meanTurns.toFixed(1)} turns)`,
+      `(${v.judged}/${v.trials} judged, $${v.meanCostUsd.toFixed(4)}/run, ${v.meanTurns.toFixed(1)} turns)`
   );
   for (const [criterion, score] of Object.entries(v.meanByCriterion)) {
     console.error(`      ${criterion.padEnd(14)} ${score.toFixed(2)}`);

@@ -34,7 +34,7 @@ export async function runAgent({
   maxBudgetUsd,
   cwd,
   outputSchema,
-  onMessage,
+  onMessage
 }: RunOptions): Promise<RunResult> {
   const toolCalls: string[] = [];
   let result: RunResult | undefined;
@@ -49,9 +49,9 @@ export async function runAgent({
       ...(maxBudgetUsd !== undefined && { maxBudgetUsd }),
       ...(cwd !== undefined && { cwd }),
       ...(outputSchema !== undefined && {
-        outputFormat: { type: "json_schema" as const, schema: outputSchema },
-      }),
-    },
+        outputFormat: { type: "json_schema" as const, schema: outputSchema }
+      })
+    }
   })) {
     onMessage?.(message);
 
@@ -75,7 +75,7 @@ export async function runAgent({
         subtype: message.subtype,
         numTurns: message.num_turns,
         totalCostUsd: message.total_cost_usd,
-        durationMs: message.duration_ms,
+        durationMs: message.duration_ms
       };
     }
   }

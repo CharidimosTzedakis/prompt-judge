@@ -1,4 +1,4 @@
-import type {Criterion} from "../types.ts";
+import type { Criterion } from "../types.ts";
 
 /**
  *    input: the task the output was produced for, rendered for the judge
