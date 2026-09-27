@@ -1,9 +1,9 @@
 import * as z from "zod";
-import { runAgent } from "../runner.ts";
+import { runAgent } from "../../runner.ts";
 import { weightedMean } from "./utils.ts";
 import { SCALE, DEFAULT_JUDGE_MODEL } from "./constants.ts";
 import { Score, ScoreEntry } from "./scoreSchema.ts";
-import type { Criterion, Judgment, CriterionScore } from "../types.ts";
+import type { Criterion, Judgment, CriterionScore } from "../../types.ts";
 import type { JudgeOptions } from "./types.ts";
 
 function getScoreSchema(criteria: Criterion[]): Record<string, unknown> {

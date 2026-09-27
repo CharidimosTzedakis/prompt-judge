@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import type { Criterion, PromptVariant, EvalCase, Suite } from "../types.ts";
+import type { Criterion, PromptVariant, EvalCase, Suite } from "../../types.ts";
 
 /** The task input for diff review: what changed, and against what. */
 export type DiffInput = {

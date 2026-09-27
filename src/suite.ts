@@ -1,5 +1,5 @@
 import { runAgent } from "./runner.ts";
-import { judgeOutput } from "./judge/judge.ts";
+import { judgeOutput } from "./components/judge/judge.ts";
 import type {
   Suite,
   SuiteReport,

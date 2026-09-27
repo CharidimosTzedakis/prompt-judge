@@ -1,4 +1,4 @@
-import type { Criterion, CriterionScore } from "../types.ts";
+import type { Criterion, CriterionScore } from "../../types.ts";
 
 export function weightedMean(
   scores: CriterionScore[],

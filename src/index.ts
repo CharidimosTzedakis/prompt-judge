@@ -1,5 +1,8 @@
 import { runAgent } from "./runner.ts";
-import { baselineVariant, REVIEW_TOOLS } from "./use-cases/review-diff.ts";
+import {
+  baselineVariant,
+  REVIEW_TOOLS
+} from "./test-cases/diff-reviewer/review-diff.ts";
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 
 // Core: the pieces every use case is built from.
@@ -29,7 +32,7 @@ export {
   checklistVariant,
   REVIEW_TOOLS,
   type DiffInput
-} from "./use-cases/review-diff.ts";
+} from "./test-cases/diff-reviewer/review-diff.ts";
 
 export type ReviewOptions = {
   /** The diff to review. Supply it yourself so the reviewed input is deterministic. */
