@@ -36,7 +36,7 @@ export async function runAgent({
   outputSchema,
   onMessage
 }: RunOptions): Promise<RunResult> {
-  const toolCalls: string[] = [];
+  const toolCalls: { name: string; input: string }[] = [];
   let result: RunResult | undefined;
 
   for await (const message of query({
@@ -58,7 +58,7 @@ export async function runAgent({
     if (message.type === "assistant") {
       for (const block of message.message?.content ?? []) {
         if (block.type === "tool_use") {
-          toolCalls.push(block.name);
+          toolCalls.push({ name: block.name, input: block.input as string });
         }
       }
     }

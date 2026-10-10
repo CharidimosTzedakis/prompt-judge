@@ -75,7 +75,7 @@ export type RunResult = {
   /** Present only when the run declared an output schema. */
   structuredOutput?: unknown;
   /** Tool names in call order - the trajectory, for trace-level assertions. */
-  toolCalls: string[];
+  toolCalls: { name: string; input: string }[];
   isError: boolean;
   subtype: string;
   numTurns: number;
