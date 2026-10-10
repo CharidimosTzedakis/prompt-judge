@@ -3,7 +3,6 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 function withClonedRepo<T>(url: URL, work: (repoDir: string) => T): T {
-  // alternative:  const workDir = mkdtempSync(join(tmpdir(), "prompt-judge-"));
   const workDir = mkdtempSync(join(process.cwd(), "work-"));
   try {
     execFileSync("git", ["clone", "--quiet", url.href, workDir], {
@@ -15,7 +14,6 @@ function withClonedRepo<T>(url: URL, work: (repoDir: string) => T): T {
   }
 }
 
-/** Read a diff from git. Throws if the ref is unknown. */
 function getDiff(
   baseBranch: string,
   targetBranch: string,
@@ -31,9 +29,12 @@ function getDiff(
   );
 }
 
-const diff = withClonedRepo(
-  new URL("https://github.com/CharidimosTzedakis/luna-cms"),
-  (dir) => getDiff("main", "pdf-upload-improvements", dir)
-);
-
-console.log(diff);
+export function cloneGetDiff(
+  repoURL: URL,
+  baseBranch: string,
+  targetBranch: string
+) {
+  return withClonedRepo(repoURL, (cwd) =>
+    getDiff(baseBranch, targetBranch, cwd)
+  );
+}
