@@ -2,6 +2,9 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
+const REPO_OWNER = "repoOwner";
+const REPO = "repo";
+
 function withClonedRepo<T>(
   url: URL,
   work: (repoDir: string) => T,
@@ -93,12 +96,12 @@ export function cloneGetDiff({
   );
 }
 
-// TODO: full content of changed files, before and after
-
 const diff = cloneGetDiff({
-  repoURL: new URL("https://github.com/twentyhq/twenty"),
+  repoURL: new URL(`https://github.com/${REPO_OWNER}/${REPO}`),
   PRNumber: 27632
 });
+
+// https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${COMMIT_HASH}/file-path
 
 console.log(diff.split("\n")[0]);
 console.log(diff.split("\n")[40]);
