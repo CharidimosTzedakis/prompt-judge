@@ -24,6 +24,7 @@ function getDiff({
   targetBranch,
   baseCommit,
   targetCommit,
+  PRNumber,
   cwd,
   options = []
 }: {
@@ -31,6 +32,7 @@ function getDiff({
   targetBranch?: string;
   baseCommit?: string;
   targetCommit?: string;
+  PRNumber?: number;
   cwd?: string;
   options: string[];
 }): string {
@@ -39,6 +41,17 @@ function getDiff({
     diffBetween = [`origin/${baseBranch}...origin/${targetBranch}`];
   } else if (baseCommit && targetCommit) {
     diffBetween = [baseCommit, targetCommit];
+  } else if (PRNumber) {
+    // get the PR commit hash
+    const commitHash = execFileSync(
+      "git",
+      ["log", "--all", `--grep=${PRNumber}`, "--pretty=format:%H"],
+      {
+        encoding: "utf8",
+        cwd
+      }
+    );
+    diffBetween = [`${commitHash}^`, commitHash];
   } else {
     throw new Error("getDiff: base and target not defined.");
   }
@@ -54,13 +67,15 @@ export function cloneGetDiff({
   baseBranch,
   targetBranch,
   baseCommit,
-  targetCommit
+  targetCommit,
+  PRNumber
 }: {
   repoURL: URL;
   baseBranch?: string;
   targetBranch?: string;
   baseCommit?: string;
   targetCommit?: string;
+  PRNumber?: number;
 }) {
   return withClonedRepo(
     repoURL,
@@ -70,6 +85,7 @@ export function cloneGetDiff({
         targetBranch,
         baseCommit,
         targetCommit,
+        PRNumber,
         cwd,
         options: ["--name-only"]
       }),
@@ -78,15 +94,10 @@ export function cloneGetDiff({
 }
 
 // TODO: full content of changed files, before and after
-// specific commit --> 16438b3ab640f63c17b02ad51911ce39a99ce1e1
-// git diff 16438b3ab6^ 16438b3ab6 --name-only
-// we get the changed files
-// git clone --depth=50
 
 const diff = cloneGetDiff({
   repoURL: new URL("https://github.com/twentyhq/twenty"),
-  baseCommit: "16438b3ab6^",
-  targetCommit: "16438b3ab6"
+  PRNumber: 27632
 });
 
 console.log(diff.split("\n")[0]);
