@@ -1,21 +1,51 @@
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
+import { rm } from "node:fs/promises";
 import { join } from "node:path";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import { createWriteStream } from "node:fs";
 
-const REPO_OWNER = "repoOwner";
-const REPO = "repo";
+const REPO_OWNER = "REPO_OWNER";
+const REPO = "REPO";
 
-function withClonedRepo<T>(
+export async function downloadFile(
+  url: string,
+  destPath: string
+): Promise<void> {
+  const res = await fetch(url);
+
+  if (!res.ok || !res.body) {
+    throw new Error(
+      `Download failed: ${res.status} ${res.statusText} (${url})`
+    );
+  }
+
+  try {
+    await pipeline(
+      Readable.fromWeb(res.body as any),
+      createWriteStream(destPath)
+    );
+  } catch (err) {
+    await rm(destPath, { force: true });
+    throw err;
+  }
+}
+
+function doWorkWithClonedRepo<T>(
   url: URL,
   work: (repoDir: string) => T,
-  options: string[] = []
+  cloneOptions: string[] = []
 ): T {
   const workDir = mkdtempSync(join(process.cwd(), "work-"));
   try {
-    execFileSync("git", ["clone", "--quiet", ...options, url.href, workDir], {
-      stdio: "inherit"
-    });
-    // TODO: do multiple work here
+    execFileSync(
+      "git",
+      ["clone", "--quiet", ...cloneOptions, url.href, workDir],
+      {
+        stdio: "inherit"
+      }
+    );
     return work(workDir);
   } finally {
     rmSync(workDir, { recursive: true, force: true });
@@ -65,7 +95,7 @@ function getDiff({
   });
 }
 
-export function cloneGetDiff({
+export function getDiffAndChangedFiles({
   repoURL,
   baseBranch,
   targetBranch,
@@ -80,10 +110,11 @@ export function cloneGetDiff({
   targetCommit?: string;
   PRNumber?: number;
 }) {
-  return withClonedRepo(
+  return doWorkWithClonedRepo(
     repoURL,
-    (cwd) =>
-      getDiff({
+
+    async (cwd) => {
+      const diff = getDiff({
         baseBranch,
         targetBranch,
         baseCommit,
@@ -91,18 +122,33 @@ export function cloneGetDiff({
         PRNumber,
         cwd,
         options: ["--name-only"]
-      }),
+      });
+
+      const changedFiles = diff.trim().split("\n");
+
+      // TODO: we want the previous version of the files
+      await Promise.all(
+        changedFiles.map((filePath) =>
+          downloadFile(
+            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${COMMIT_HASH}/${filePath}`,
+            // flatten "src/a/index.ts" → "src__a__index.ts" so same-named files don't collide
+            join(cwd, filePath.replaceAll("/", "__"))
+          )
+        )
+      );
+
+      return {
+        diff,
+        changedFiles
+      };
+    },
     ["--filter=blob:none", "--no-checkout"]
   );
 }
 
-const diff = cloneGetDiff({
+const diff = await getDiffAndChangedFiles({
   repoURL: new URL(`https://github.com/${REPO_OWNER}/${REPO}`),
   PRNumber: 27632
 });
 
 // https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${COMMIT_HASH}/file-path
-
-console.log(diff.split("\n")[0]);
-console.log(diff.split("\n")[40]);
-console.log(diff.split("\n").length);
