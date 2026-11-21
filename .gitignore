@@ -39,3 +39,5 @@ coverage/
 .DS_Store
 Thumbs.db
 desktop.ini
+# Temp clone dirs (left behind if the process is killed)
+work-*/

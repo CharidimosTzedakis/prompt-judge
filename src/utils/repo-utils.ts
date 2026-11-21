@@ -32,11 +32,11 @@ export async function downloadFile(
   }
 }
 
-function doWorkWithClonedRepo<T>(
+async function doWorkWithClonedRepo<T>(
   url: URL,
-  work: (repoDir: string) => T,
+  work: (repoDir: string) => T | Promise<T>,
   cloneOptions: string[] = []
-): T {
+): Promise<T> {
   const workDir = mkdtempSync(join(process.cwd(), "work-"));
   try {
     execFileSync(
@@ -46,34 +46,87 @@ function doWorkWithClonedRepo<T>(
         stdio: "inherit"
       }
     );
-    return work(workDir);
+    // await so the finally block doesn't delete workDir while async work is still running
+    return await work(workDir);
   } finally {
     rmSync(workDir, { recursive: true, force: true });
   }
 }
 
+// TODO: unit test and coverage for this module
+
+function getBaseTarget({
+  branchBaseTarget,
+  commitBaseTarget,
+  PRNumber,
+  cwd
+}: {
+  branchBaseTarget?: [string, string];
+  commitBaseTarget?: [string, string];
+  PRNumber?: number;
+  cwd?: string;
+  options: string[];
+}): [string, string] {
+  if (branchBaseTarget) return branchBaseTarget;
+  if (commitBaseTarget) return commitBaseTarget;
+
+  if (PRNumber) {
+    // get the PR commit hash. Match "#<PRNumber>" not followed by another digit,
+    // as in "Merge pull request #123" or squash-merge titles ending "(#123)".
+    const commitHashes = execFileSync(
+      "git",
+      [
+        "log",
+        "--all",
+        "-E",
+        `--grep=#${PRNumber}([^0-9]|$)`,
+        "--pretty=format:%H"
+      ],
+      {
+        encoding: "utf8",
+        cwd
+      }
+    )
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    if (commitHashes.length === 0) {
+      throw new Error(`getBaseTarget: no commit found for PR #${PRNumber}.`);
+    }
+    if (commitHashes.length > 1) {
+      throw new Error(
+        `getBaseTarget: ${commitHashes.length} commits match PR #${PRNumber}, expected exactly one: ${commitHashes.join(", ")}`
+      );
+    }
+
+    const [commitHash] = commitHashes as [string];
+    return [`${commitHash}^`, commitHash];
+  }
+
+  throw new Error("getBaseTarget: base and target not defined.");
+}
+
 function getDiff({
-  baseBranch,
-  targetBranch,
-  baseCommit,
-  targetCommit,
+  branchBaseTarget,
+  commitBaseTarget,
   PRNumber,
   cwd,
   options = []
 }: {
-  baseBranch?: string;
-  targetBranch?: string;
-  baseCommit?: string;
-  targetCommit?: string;
+  branchBaseTarget?: [string, string];
+  commitBaseTarget?: [string, string];
   PRNumber?: number;
   cwd?: string;
   options: string[];
 }): string {
   let diffBetween: string[];
-  if (baseBranch && targetBranch) {
-    diffBetween = [`origin/${baseBranch}...origin/${targetBranch}`];
-  } else if (baseCommit && targetCommit) {
-    diffBetween = [baseCommit, targetCommit];
+  if (branchBaseTarget) {
+    diffBetween = [
+      `origin/${branchBaseTarget[0]}...origin/${branchBaseTarget[1]}`
+    ];
+  } else if (commitBaseTarget) {
+    diffBetween = commitBaseTarget;
   } else if (PRNumber) {
     // get the PR commit hash
     const commitHash = execFileSync(
@@ -89,36 +142,33 @@ function getDiff({
     throw new Error("getDiff: base and target not defined.");
   }
 
+  // diffBetween = [
+  //     `origin/${branchBaseTarget[0]}...origin/${branchBaseTarget[1]}`
+  //   ];
   return execFileSync("git", ["diff", ...diffBetween, ...options], {
     encoding: "utf8",
     cwd
   });
 }
 
-export function getDiffAndChangedFiles({
+export async function getDiffAndChangedFiles({
   repoURL,
-  baseBranch,
-  targetBranch,
-  baseCommit,
-  targetCommit,
+  branchBaseTarget,
+  commitBaseTarget,
   PRNumber
 }: {
   repoURL: URL;
-  baseBranch?: string;
-  targetBranch?: string;
-  baseCommit?: string;
-  targetCommit?: string;
+  branchBaseTarget?: [string, string];
+  commitBaseTarget?: [string, string];
   PRNumber?: number;
 }) {
-  return doWorkWithClonedRepo(
+  return await doWorkWithClonedRepo(
     repoURL,
 
     async (cwd) => {
       const diff = getDiff({
-        baseBranch,
-        targetBranch,
-        baseCommit,
-        targetCommit,
+        branchBaseTarget,
+        commitBaseTarget,
         PRNumber,
         cwd,
         options: ["--name-only"]
@@ -130,7 +180,7 @@ export function getDiffAndChangedFiles({
       await Promise.all(
         changedFiles.map((filePath) =>
           downloadFile(
-            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${COMMIT_HASH}/${filePath}`,
+            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${REF}/${filePath}`,
             // flatten "src/a/index.ts" → "src__a__index.ts" so same-named files don't collide
             join(cwd, filePath.replaceAll("/", "__"))
           )
