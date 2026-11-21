@@ -159,12 +159,30 @@ export async function getDiffAndChangedFiles({
         options: ["--name-only"]
       });
 
-      const changedFiles = diff.trim().split("\n");
+      // same diff minus added files (--diff-filter=a excludes "A"), since those
+      // don't exist at the base commit and would 404 when downloaded
+      const changedFiles = getDiff({
+        baseTarget,
+        cwd,
+        options: ["--name-only", "--diff-filter=a"]
+      })
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean);
+
+      // resolve to a concrete SHA that raw.githubusercontent.com understands
+      // (it can't resolve "sha^" or "origin/<branch>"). merge-base matches the
+      // "base...target" semantics used by getDiff.
+      const baseSha = execFileSync(
+        "git",
+        ["merge-base", baseTarget[0], baseTarget[1]],
+        { encoding: "utf8", cwd }
+      ).trim();
 
       await Promise.all(
         changedFiles.map((filePath) =>
           downloadFile(
-            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${base}/${filePath}`,
+            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${baseSha}/${filePath}`,
             // flatten "src/a/index.ts" → "src__a__index.ts" so same-named files don't collide
             join(cwd, filePath.replaceAll("/", "__"))
           )
@@ -184,5 +202,3 @@ const diff = await getDiffAndChangedFiles({
   repoURL: new URL(`https://github.com/${REPO_OWNER}/${REPO}`),
   PRNumber: 27632
 });
-
-// https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${COMMIT_HASH}/file-path
