@@ -65,7 +65,6 @@ function getBaseTarget({
   commitBaseTarget?: [string, string];
   PRNumber?: number;
   cwd?: string;
-  options: string[];
 }): [string, string] {
   if (branchBaseTarget) return branchBaseTarget;
   if (commitBaseTarget) return commitBaseTarget;
@@ -108,47 +107,22 @@ function getBaseTarget({
 }
 
 function getDiff({
-  branchBaseTarget,
-  commitBaseTarget,
-  PRNumber,
+  baseTarget,
   cwd,
   options = []
 }: {
-  branchBaseTarget?: [string, string];
-  commitBaseTarget?: [string, string];
-  PRNumber?: number;
+  baseTarget: [string, string];
   cwd?: string;
   options: string[];
 }): string {
-  let diffBetween: string[];
-  if (branchBaseTarget) {
-    diffBetween = [
-      `origin/${branchBaseTarget[0]}...origin/${branchBaseTarget[1]}`
-    ];
-  } else if (commitBaseTarget) {
-    diffBetween = commitBaseTarget;
-  } else if (PRNumber) {
-    // get the PR commit hash
-    const commitHash = execFileSync(
-      "git",
-      ["log", "--all", `--grep=${PRNumber}`, "--pretty=format:%H"],
-      {
-        encoding: "utf8",
-        cwd
-      }
-    );
-    diffBetween = [`${commitHash}^`, commitHash];
-  } else {
-    throw new Error("getDiff: base and target not defined.");
-  }
-
-  // diffBetween = [
-  //     `origin/${branchBaseTarget[0]}...origin/${branchBaseTarget[1]}`
-  //   ];
-  return execFileSync("git", ["diff", ...diffBetween, ...options], {
-    encoding: "utf8",
-    cwd
-  });
+  return execFileSync(
+    "git",
+    ["diff", `${baseTarget[0]}...${baseTarget[1]}`, ...options],
+    {
+      encoding: "utf8",
+      cwd
+    }
+  );
 }
 
 export async function getDiffAndChangedFiles({
@@ -166,21 +140,31 @@ export async function getDiffAndChangedFiles({
     repoURL,
 
     async (cwd) => {
-      const diff = getDiff({
+      const [base, target] = getBaseTarget({
         branchBaseTarget,
         commitBaseTarget,
         PRNumber,
+        cwd
+      });
+      // remote branches only exist as origin/<name> in a fresh --no-checkout clone
+      const prefix = branchBaseTarget ? "origin/" : "";
+      const baseTarget: [string, string] = [
+        `${prefix}${base}`,
+        `${prefix}${target}`
+      ];
+
+      const diff = getDiff({
+        baseTarget,
         cwd,
         options: ["--name-only"]
       });
 
       const changedFiles = diff.trim().split("\n");
 
-      // TODO: we want the previous version of the files
       await Promise.all(
         changedFiles.map((filePath) =>
           downloadFile(
-            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${REF}/${filePath}`,
+            `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO}/${base}/${filePath}`,
             // flatten "src/a/index.ts" → "src__a__index.ts" so same-named files don't collide
             join(cwd, filePath.replaceAll("/", "__"))
           )
